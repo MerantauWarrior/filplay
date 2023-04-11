@@ -1,0 +1,23 @@
+.form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid #33312b;
+}
+.inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+}
+.label {
+  color: #787980;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
