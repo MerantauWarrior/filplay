@@ -1,79 +1,99 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./Player.module.css";
 import Icon from "../../components/UI/Icon";
 
-export default function Player() {
-  const [duration, setDuraion] = useState(0);
-  const audioRef = useRef();
-  const play = () => {
-    audioRef.current.play();
+export default function Player({
+  playPause,
+  next,
+  prev,
+  prevFow,
+  nextFow,
+  audRef,
+  duration,
+  progress,
+}) {
+  const [volume, setVolume] = useState(20);
+  const progressRef = useRef(null);
+  const update = (e) => {
+    audRef.current.currentTime = e.target.value;
   };
-  const pause = () => {
-    audioRef.current.pause();
-  };
-  const stop = () => {
-    audioRef.current.pause();
-    audioRef.current.currentTime = 0;
-  };
-  const backward = () => {
-    audioRef.current.currentTime -= 10;
-  };
-  const forward = () => {
-    audioRef.current.currentTime += 10;
-  };
-  const getDuration = () => {
-    setDuraion(Math.floor(audioRef.current.duration));
-  };
-  const updateTime = () => {
-    console.log(
-      Math.floor(audioRef.current.duration - audioRef.current.currentTime)
-    );
-  };
+  useEffect(() => {
+    if (audRef) {
+      audRef.current.volume = volume / 100;
+    }
+  }, [volume, audRef]);
+
   const toHHMMSS = (senondsNumber) => {
     let sec_num = parseInt(senondsNumber, 10);
     let hours = Math.floor(sec_num / 3600);
     let minutes = Math.floor((sec_num - hours * 3600) / 60);
     let seconds = sec_num - hours * 3600 - minutes * 60;
-    hours = hours !== 0 ? hours : null;
-    minutes = minutes !== 0 ? minutes : null;
+    hours = hours !== 0 ? hours : "";
     hours =
-      hours < 10 && hours !== null
+      hours < 10 && hours !== ""
         ? "0" + hours + ":"
-        : hours === null
+        : hours === ""
         ? ""
         : hours;
-    minutes =
-      minutes < 10 && minutes !== null
-        ? "0" + minutes + ":"
-        : minutes !== null
-        ? ""
-        : minutes;
+    minutes = minutes < 10 ? "0" + minutes + ":" : minutes;
     seconds = seconds < 10 ? "0" + seconds : seconds;
     return hours + minutes + seconds;
   };
-  let played = "20%";
   return (
     <div className={styles.wrapper}>
-      <div className={styles.progress}>
-        <div className={styles.played} style={{ width: played }}></div>
+      <div>
+        <input
+          type="range"
+          ref={progressRef}
+          min={0}
+          max={duration}
+          value={progress}
+          onChange={(e) => update(e)}
+          style={{ width: "100%" }}
+        />
+      </div>
+      <div>
+        <input
+          type="range"
+          min={0}
+          max={100}
+          step={0.1}
+          value={volume}
+          onChange={(e) => setVolume(e.target.value)}
+          style={{ width: "100%" }}
+        />
       </div>
       <div className={styles.inner}>
-        <Icon name="play" size="30px" fill="white" onClick={play} />
-        <Icon name="pause" size="30px" fill="white" onClick={pause} />
-        <Icon name="stop" size="30px" fill="white" onClick={stop} />
-        <Icon name="backward" size="30px" fill="white" onClick={backward} />
-        <Icon name="forward" size="30px" fill="white" onClick={forward} />
-        <Icon name="previous" size="30px" fill="white" />
-        <Icon name="next" size="30px" fill="white" />
-        <div>{toHHMMSS(duration)}</div>
+        <div className={styles.icons}>
+          <Icon
+            name="play"
+            size="30px"
+            fill="white"
+            onClick={() => playPause("play")}
+          />
+          <Icon
+            name="pause"
+            size="30px"
+            fill="white"
+            onClick={() => playPause("pause")}
+          />
+          <Icon
+            name="stop"
+            size="30px"
+            fill="white"
+            onClick={() => playPause("stop")}
+          />
+          <Icon name="backward" size="30px" fill="white" onClick={prevFow} />
+          <Icon name="forward" size="30px" fill="white" onClick={nextFow} />
+          <Icon name="previous" size="30px" fill="white" onClick={prev} />
+          <Icon name="next" size="30px" fill="white" onClick={next} />
+        </div>
+        <div className={styles.time}>
+          <div>{toHHMMSS(progress)}</div>
+          <div>/</div>
+          <div>{toHHMMSS(duration)}</div>
+        </div>
       </div>
-      <audio
-        src="/1.mp4"
-        controls
-        ref={audioRef}
-        onDurationChange={getDuration}
-        onTimeUpdate={updateTime}
-      ></audio>
     </div>
   );
 }

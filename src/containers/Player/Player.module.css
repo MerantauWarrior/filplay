@@ -6,7 +6,7 @@
 .progress {
   position: relative;
   width: 100%;
-  height: 5px;
+  height: 8px;
   background-color: #787980;
 }
 .played {
@@ -17,8 +17,19 @@
   background-color: yellow;
 }
 .inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 24px;
 }
 audio {
   display: none;
+}
+.time {
+  display: flex;
+  align-items: center;
+}
+.icons {
+  display: flex;
+  align-items: center;
 }
